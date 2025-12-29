@@ -1,0 +1,50 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Virtual Environments ---
+# Common names for virtual env folders
+venv/
+env/
+.venv/
+.env/
+
+# --- Environment Variables (CRITICAL) ---
+# Never commit your API keys to git!
+.env
+.env.local
+.env.*.local
+
+# --- IDEs and Editors ---
+# VS Code
+.vscode/
+*.code-workspace
+
+# PyCharm / IntelliJ
+.idea/
+
+# --- Operating System Files ---
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Mac
+.DS_Store
+
+# --- Logs and Databases ---
+*.log
+*.sqlite
+*.db
+
+# --- Data Analysis (Optional) ---
+# If you download CSVs or Excel files you don't want to commit
+*.csv
+*.xlsx
+.ipynb_checkpoints/
+
+# --- Distribution / Packaging ---
+dist/
+build/
+*.egg-info/
