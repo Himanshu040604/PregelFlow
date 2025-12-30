@@ -1,5 +1,3 @@
-git clone [https://github.com/Himanshu040604/PregelFlow.git](https://github.com/Himanshu040604/PregelFlow.git)
-pip install -r requirements.txt
 
 # PregelFlow
 
@@ -82,15 +80,15 @@ PregelFlow/
     ```
 2. **Create a Virtual Environment**
     - **Windows:**
-      ```powershell
+    ```powershell
       python -m venv venv
       venv\Scripts\activate
-      ```
+    ```
     - **Mac/Linux:**
-      ```bash
+    ```bash
       python3 -m venv venv
       source venv/bin/activate
-      ```
+    ```
 3. **Install Dependencies**
     ```bash
     pip install -r requirements.txt
