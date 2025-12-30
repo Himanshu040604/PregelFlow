@@ -1,7 +1,7 @@
 import asyncio
 import aiohttp
 import os
-from pathlib import Path  # Import pathlib
+from pathlib import Path  
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -20,7 +20,7 @@ async def get_weather(city: str) -> str:
 
     api_key = os.getenv("OPENWEATHER_API_KEY")
     if not api_key:
-        return "Weather Error: API Key missing. Please check your .env file."
+        return "Weather API key missing check your .env file."
 
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
 

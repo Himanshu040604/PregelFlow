@@ -5,7 +5,7 @@ import pandas as pd
 import yfinance as yf
 from io import StringIO
 
-# --- 1. Hardcoded Crypto List ---
+#tried to block crypto related queries with a hardcoded list
 CRYPTO_LIST = {
     "bitcoin", "btc", "ethereum", "eth", "tether", "usdt", 
     "bnb", "solana", "sol", "xrp", "usdc", "cardano", "ada", 
@@ -15,8 +15,7 @@ CRYPTO_LIST = {
     "crypto", "cryptocurrency", "coins"
 }
 
-# --- 2. Currency Helper ---
-
+#for currency
 def get_symbol_from_code(currency_code: str) -> str:
     """Converts ISO currency codes to symbols."""
     if not currency_code: return "$"
@@ -29,13 +28,9 @@ def get_symbol_from_code(currency_code: str) -> str:
     }
     return currency_map.get(currency_code.upper(), f"{currency_code} ")
 
-# --- 3. Dynamic List Fetcher ---
-
 def get_tickers_from_wikipedia(city: str) -> list:
     """Scrapes Wikipedia for the latest stock list."""
     city_lower = city.lower()
-    
-    # --- ENHANCED RESTRICTED LOGIC ---
     restricted_map = {
         "russia": "Russia", "moscow": "Russia", "ru": "Russia",
         "china": "China", "beijing": "China", "shanghai": "China",
@@ -46,7 +41,6 @@ def get_tickers_from_wikipedia(city: str) -> list:
         country_name = restricted_map[city_lower]
         return [f"RESTRICTED_ERROR:{city.title()}:{country_name}"]
 
-    # --- STANDARD SCRAPING ---
     url, suffix, target_column = "", "", ""
 
     if city_lower in ["mumbai", "india", "delhi"]:
@@ -97,9 +91,6 @@ def get_tickers_from_wikipedia(city: str) -> list:
     except Exception as e:
         print(f"   Scraping Error: {e}")
         return []
-
-# --- 4. Helper: Search (Double Check) ---
-
 async def search_symbol(query: str) -> str:
     """Finds the best ticker. STRICTLY FILTERS OUT CRYPTO."""
     url = f"https://query2.finance.yahoo.com/v1/finance/search?q={query}&quotesCount=10&newsCount=0"
@@ -115,11 +106,9 @@ async def search_symbol(query: str) -> str:
 
                     valid_quote = None
                     for q in quotes:
-                        # Reject Crypto (Backend Check)
+                        # Reject crypto currencies
                         if q.get("quoteType", "").upper() == "CRYPTOCURRENCY":
                             continue 
-                        
-                        # Prioritize US
                         if q.get("exchange") in ["NYQ", "NMS", "NAM", "NYS", "NAS"]:
                             return q["symbol"]
                         
@@ -132,16 +121,12 @@ async def search_symbol(query: str) -> str:
         print(f"Search Error: {e}")
     return query
 
-# --- 5. Core Pricing Logic ---
-
 def _get_stock_perf_sync(ticker: str):
     """Fetches price and detects currency dynamically."""
     try:
         if ticker in ["NO_VALID_STOCK_FOUND"]: return None
 
         stock = yf.Ticker(ticker)
-        
-        # Double check metadata to block crypto
         if stock.info.get('quoteType') == 'CRYPTOCURRENCY': return None
 
         price = stock.fast_info.last_price
@@ -168,7 +153,6 @@ async def find_top_gainer(city: str) -> str:
     
     tickers = await asyncio.to_thread(get_tickers_from_wikipedia, city)
     
-    # --- CHECK FOR RESTRICTED ERROR FORMAT ---
     if tickers and tickers[0].startswith("RESTRICTED_ERROR"):
         _, input_city, country = tickers[0].split(":")
         return f"{input_city} belongs to {country} and Wikipedia has no access for that information"
@@ -204,17 +188,11 @@ async def get_single_stock_output(ticker: str) -> str:
     
     return f"{data['ticker']}: {data['currency']}{data['price']:,.2f} ({data['change']:+.2f}%)"
 
-# --- 6. Main Controller ---
-
 async def get_stock_data(query: str) -> str:
     query_lower = query.lower().strip()
-    
-    # --- 1. HARDCODED CRYPTO CHECK ---
-    # Check if the user input matches our blocked list
     if query_lower in CRYPTO_LIST:
-        return "I can only provide the answer for companies stock only"
+        return "PregelFlow can only provide the answer for companies stock only"
     
-    # --- 2. LOCATION & GENERAL CHECKS ---
     restricted_keys = ["russia", "moscow", "ru", "china", "beijing", "shanghai"]
     supported_scrape = ["london", "uk", "mumbai", "india", "delhi", "new york", "nyc", "usa", "us", "germany"]
     
@@ -226,7 +204,5 @@ async def get_stock_data(query: str) -> str:
         tasks = [get_single_stock_output(i) for i in indices]
         res = await asyncio.gather(*tasks)
         return "Global Overview:\n" + "\n".join(res)
-
-    # --- 3. SINGLE STOCK SEARCH ---
     found_ticker = await search_symbol(query)
     return await get_single_stock_output(found_ticker)
