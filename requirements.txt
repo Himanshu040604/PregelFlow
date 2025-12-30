@@ -1,0 +1,7 @@
+langgraph
+langgraph-checkpoint-sqlite
+aiosqlite==0.21.0
+aiohttp
+python-dotenv
+pandas
+yfinance
